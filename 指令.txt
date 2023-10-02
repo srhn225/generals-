@@ -1,0 +1,20 @@
+location=x,y
+command=x up/down/left/right
+#让x,y位置的若干兵向某方向移动（x可以换成任意整数）
+location=x,y
+command=gen up/down/left/right
+#让x,y位置的将领向某方向移动
+location=x,y
+command=update 1/2
+#将x,y位置的将领升级，升级类型为1/2（产量，防御）
+location=none
+command=tech 1/2/3/4/5（行动力 将军行动力 攀岩  解锁超武 免疫沼泽）
+#解锁指定科技
+location=end/""
+#结束这一回合
+location=x,y
+command=print
+#打印此格信息
+location=x,y
+command=bomb/strengthen/tp x,y/timestop
+#使用超级武器
