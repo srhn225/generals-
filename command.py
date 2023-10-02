@@ -243,18 +243,26 @@ def execute_command(board,location,command,player):
             y=(int)(part[1])
             board[x][y].print_info()
         elif command=="bomb":
-            if player.ishitech:
+            if player.ishitech and round-player.hitechround>=100:
                 skills.bomb(board,location,round)
+            else:
+                print("Error:不可用")
         elif command=="strengthen":
-            if player.ishitech:
+            if player.ishitech and round-player.hitechround>=100:
                 skills.strengthen(board,location,round)
+            else:
+                print("Error:不可用")
         elif command=="timestop":
-            if player.ishitech:
+            if player.ishitech and round-player.hitechround>=100:
                 skills.timestop(board,location,round)
+            else:
+                print("Error:不可用")
         elif command[0]=="t" and command[1]=="p":
-            if player.ishitech:
+            if player.ishitech and round-player.hitechround>=100:
                 _, xy = command.split(' ')
                 skills.tp(board,location,xy,player,round)
+            else:
+                print("Error:不可用")
         else:
             part=location.split(",")
             x=(int)(part[0])
