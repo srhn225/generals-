@@ -5,6 +5,9 @@ location=x,y
 command=gen up/down/left/right
 #让x,y位置的将领向某方向移动
 location=x,y
+command=gen sk Raid x,y/Breakthrough x,y/Leadership/Defense/Weaken
+#让x,y位置的将领向某方向移动
+location=x,y
 command=update 1/2
 #将x,y位置的将领升级，升级类型为1/2（产量，防御）
 location=none
@@ -18,3 +21,6 @@ command=print
 location=x,y
 command=bomb/strengthen/tp x,y/timestop
 #使用超级武器
+location=x,y
+command=newgen
+#招募新将领

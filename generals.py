@@ -10,6 +10,12 @@ class Grid:
         self.radiatedround=0
         self.isstopped=False
         self.stopround=0
+        self.isleadership=False
+        self.leadershipround=0
+        self.isdefence=False
+        self.defenceround=0
+        self.isweaken=False
+        self.weakenround=0
     def variation(self,round,player1,player2):
         pass
     def to_string(self):
@@ -61,6 +67,9 @@ class Mountain(Grid):
 class General(Grid):
     def __init__(self):
         super().__init__()
+        self.raidround=0
+        self.breakthroughround=0
+        self.leaderround=0
     def variation():
         pass
     def to_string(self):

@@ -245,22 +245,26 @@ def execute_command(board,location,command,player):
         elif command=="bomb":
             if player.ishitech and round-player.hitechround>=100:
                 skills.bomb(board,location,round)
+                player.hitechround=round
             else:
                 print("Error:不可用")
         elif command=="strengthen":
             if player.ishitech and round-player.hitechround>=100:
                 skills.strengthen(board,location,round)
+                player.hitechround=round
             else:
                 print("Error:不可用")
         elif command=="timestop":
             if player.ishitech and round-player.hitechround>=100:
                 skills.timestop(board,location,round)
+                player.hitechround=round
             else:
                 print("Error:不可用")
         elif command[0]=="t" and command[1]=="p":
             if player.ishitech and round-player.hitechround>=100:
                 _, xy = command.split(' ')
                 skills.tp(board,location,xy,player,round)
+                player.hitechround=round
             else:
                 print("Error:不可用")
         else:
@@ -271,12 +275,78 @@ def execute_command(board,location,command,player):
                 print("Error:时间停止，不能操作")
                 return
             if command.find("gen") != -1:#将军移动
-                if player.generalactpointnow>0:
-                    player.generalactpointnow-=1
-                    commandnow=command[4:]
-                    general_move(board,location,commandnow,player)
+                if command=="newgen":
+                    if player.money>=constant.lieutenant_new_recruit:
+                        if type(board[x][y]).__name__=="Plain":
+                            if board[x][y].belong==player.belong:
+                                newgen=Lieutenant()
+                                newgen.army=board[x][y].army
+                                newgen.belong=board[x][y].belong
+                                newgen.attack = board[x][y].attack
+                                newgen.isradiation = board[x][y].isradiation
+                                newgen.isstrengthen = board[x][y].isstrengthen
+                                newgen.strengthenround = board[x][y].strengthenround
+                                newgen.radiatedround = board[x][y].radiatedround
+                                newgen.isstopped = board[x][y].isstopped
+                                newgen.stopround = board[x][y].stopround
+                                newgen.isleadership = board[x][y].isleadership
+                                newgen.leadershipround = board[x][y].leadershipround
+                                newgen.isdefence = board[x][y].isdefence
+                                newgen.defenceround = board[x][y].defenceround
+                                newgen.isweaken = board[x][y].isweaken
+                                newgen.weakenround = board[x][y].weakenround
+                                board[x][y]=newgen
+                            else:
+                                print("只能在自己的领地上招募")
+                        else:
+                            print("只能在平地上招募")
+                    else:
+                        print("钱不够")
+
+                if command.find("sk")!=-1:
+                    if command.startswith("gen sk Raid"):
+                        destx, desty = map(int, command.split(" ")[-1].split(","))
+                        if player.money>=constant.tactical_strike and round-board[x][y].raidround>5:
+                            board[x][y].raidround=round
+                            skills.Raid(board,location,round,player,destx,desty)
+                            player.money-=constant.tactical_strike
+                        else:
+                            print("Error:不可用")
+                    elif command.startswith("gen sk Breakthrough"):
+                        destx, desty = map(int, command.split(" ")[-1].split(","))
+                        if player.money>=constant.breakthrough and round-board[x][y].breakthroughround>10:
+                            board[x][y].breakthroughround=round
+                            player.money-=constant.breakthrough
+                            if board[destx][desty].army>=20:
+                                board[destx][desty].army-=20
+                            else:
+                                board[destx][desty].army=0
+                    elif command == "gen sk Leadership":
+                        if player.money>=constant.leadership and round-board[x][y].leaderround>10:
+                            board[x][y].leaderround=round
+                            player.money-=constant.leadership
+                            skills.Leadership(board,x,y,player,round)
+                        else:
+                            print("Error:不可用")
+                    elif command == "gen sk Defense":
+                        if player.money>=constant.fortification and round-board[x][y].leaderround>10:
+                            board[x][y].leaderround=round
+                            player.money-=constant.fortification
+                            skills.Defense(board,x,y,player,round)
+                    elif command == "gen sk Weaken":
+                        if player.money>=constant.weakening and round-board[x][y].leaderround>10:
+                            board[x][y].leaderround=round
+                            player.money-=constant.weakening
+                            skills.Weaken(board,x,y,player,round)
+                    else:
+                     print("Error:未知指令")
                 else:
-                    print("没有将军行动点")
+                    if player.generalactpointnow>0:
+                        player.generalactpointnow-=1
+                        commandnow=command[4:]
+                        general_move(board,location,commandnow,player)
+                    else:
+                        print("没有将军行动点")
             else:
                 if player.armyactpointnow>0:
                     player.armyactpointnow-=1
@@ -427,6 +497,18 @@ def update_round(board,round,player1,player2):
         for cell in row:
             if not cell.isstopped:
                 cell.variation(round,player1,player2)
+            if cell.isleadership:
+                if round-cell.leadershipround==10:
+                    cell.isleadership=False
+                    cell.attack=cell.attack//1.5
+            if cell.isdefence:
+                if round-cell.defenceround==10:
+                    cell.isdefence=False
+                    cell.defence=cell.defence//1.5
+            if cell.isweaken:
+                if round-cell.weakenround==10:
+                    cell.isweaken=False
+                    cell.attack=cell.attack//0.75
             if cell.isradiation:
                 cell.get_radiated()
                 if(round-cell.radiatedround>=10):

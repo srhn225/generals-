@@ -86,9 +86,112 @@ def timestop(board,location,round):
 def stop(grid,round):
     grid.isstopped=True
     grid.stopround=round
-def traverse_5x5_region(arr, center_row, center_col):
+def Leadership(arr, center_row, center_col,player,round):
     for i in range(center_row - 2, center_row + 3):
         for j in range(center_col - 2, center_col + 3):
             # 检查索引是否在数组范围内
             if 0 <= i < len(arr) and 0 <= j < len(arr[0]):
-                print(arr[i][j])
+                if arr[i][j].belong==player.belong:
+                    arr[i][j].attack*=1.5
+                    arr[i][j].leadershipround=round
+                    arr[i][j].isleadership=True
+def Defense(arr, center_row, center_col,player,round):
+    for i in range(center_row - 2, center_row + 3):
+        for j in range(center_col - 2, center_col + 3):
+            # 检查索引是否在数组范围内
+            if 0 <= i < len(arr) and 0 <= j < len(arr[0]):
+                if arr[i][j].belong==player.belong:
+                    arr[i][j].defence*=1.5
+                    arr[i][j].defenceround=round
+                    arr[i][j].isdefense=True
+def Weaken(arr, center_row, center_col,player,round):
+    for i in range(center_row - 2, center_row + 3):
+        for j in range(center_col - 2, center_col + 3):
+            # 检查索引是否在数组范围内
+            if 0 <= i < len(arr) and 0 <= j < len(arr[0]):
+                if arr[i][j].belong!=player.belong:
+                    arr[i][j].attack*=0.75
+                    arr[i][j].defence*=0.75
+                    arr[i][j].weakenround=round
+                    arr[i][j].isweaken=True
+def Raid(board,location,round,player,x,y):
+    part=location.split(",")
+    stx=(int)(part[0])
+    sty=(int)(part[1])
+    if type(board[x][y]).__name__=="Lieutenant" or type(board[x][y]).__name__=="Commander" or type(board[x][y]).__name__=="Farmer":
+        print("Error:不可到达此位置")
+        return
+    if type(board[x][y]).__name__=="Mountain":
+        if not player.ismountain:
+            print("Error:不可到达此位置")
+            return
+    if board[x][y].belong!=board[stx][sty].belong:
+        if board[stx][sty].army*board[stx][sty].attack<=board[x][y].army*board[x][y].defence:
+            print("Error:不可到达此位置")
+            return
+        else:
+            newarmynum=(board[stx][sty].army*board[stx][sty].attack-board[x][y].army*board[x][y].defence)//board[stx][sty].attack
+            if type(board[x][y]).__name__=="Mountain":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Mountain()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
+                
+            elif type(board[x][y]).__name__=="Plain":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Plain()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
+            elif type(board[x][y]).__name__=="Swamp":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Swamp()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
+    elif board[x][y].belong==board[stx][sty].belong:
+            newarmynum=board[stx][sty].army+board[x][y].army
+            if type(board[x][y]).__name__=="Mountain":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Mountain()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
+                
+            elif type(board[x][y]).__name__=="Plain":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Plain()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
+            elif type(board[x][y]).__name__=="Swamp":
+                nowon=board[stx][sty].nowon
+                if type(nowon).__name__=='Grid':
+                    nowon=Plain()
+                board[x][y]=board[stx][sty]
+                board[x][y].nowon=Swamp()
+                board[x][y].army=newarmynum
+                board[stx][sty]=nowon
+                board[stx][sty].army=0
+                board[stx][sty].belong=player.belong
